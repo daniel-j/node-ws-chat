@@ -25,31 +25,22 @@ define(function () {
 
 		this.messageNode = document.createElement('span');
 		this.messageNode.classList.add('message');
+		this.messageNode.textContent = config.message;
 
 		if (this.type === ChatItem.TYPE_CHAT) {
 			this.node.appendChild(this.timestampNode);
 			this.node.appendChild(this.nickNode);
 			this.node.appendChild(this.messageNode);
+			this.nickNode.textContent = user.nick;
 		} else if (config.type === ChatItem.TYPE_CONSOLE) {
 			this.node.appendChild(this.timestampNode);
 			this.node.appendChild(this.messageNode);
 		} else {
 			throw "Invalid type "+config.type;
 		}
-
-		this.update(config);
 	}
 	ChatItem.TYPE_CHAT = 0;
 	ChatItem.TYPE_CONSOLE = 1;
-
-	ChatItem.prototype.update = function (config) {
-		if ('nick' in config.type === ChatItem.TYPE_CHAT) {
-			this.nickNode.textContent = this.nick;
-		}
-		if ('message' in config) {
-			this.messageNode.textContent = this.nick;
-		}
-	}
 
 
 	return ChatItem;

@@ -26,6 +26,7 @@ define(['User'], function (User) {
 		if ('nick' in config) {
 			this.nickNode.textContent = this.nick;
 		}
+		
 	}
 
 	return UserlistItem;

@@ -81,7 +81,7 @@ require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'],
 
 	loginManager.loginAttemptCallback = function (nick) {
 		myNick = nick;
-		console.log(wsHost);
+		
 		ws = new WebSocket(wsHost, wsProtocol);
 		ws.addEventListener('open', 	wsOpen);
 		ws.addEventListener('message', 	wsMessage);

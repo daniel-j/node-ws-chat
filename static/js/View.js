@@ -9,12 +9,12 @@ define(function () {
 		this.name = this.element.dataset.name;
 		this.states = [];
 		this.element.classList.add('active');
-
+		
 		if (this.element.dataset.states) {
 			this.addState.apply(this, this.element.dataset.states.split(','));
 		}
 	}
-
+	
 	View.prototype.setState = function (states) {
 		states = typeof states === 'object' && states.length > 0? states : arguments;
 
@@ -48,7 +48,7 @@ define(function () {
 			}
 		}
 	}
-
+	
 	return View;
 
 });

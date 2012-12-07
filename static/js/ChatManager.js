@@ -14,7 +14,7 @@ define(['ChatItem'], function (ChatItem) {
 		this.chatForm.addEventListener('submit', function (e) {
 			e.preventDefault();
 			if (self.canChat) {
-				
+
 			}
 		}, false);
 	}
@@ -32,6 +32,13 @@ define(['ChatItem'], function (ChatItem) {
 	ChatManager.prototype.addItem = function (item) {
 		this.log.push(item);
 		this.chatContainer.appendChild(item.node);
+	}
+
+	ChatManager.prototype.disable = function (doDisable) {
+		if (typeof doDisable === 'undefined') {
+			doDisable = true;
+		}
+		
 	}
 
 	return ChatManager;
