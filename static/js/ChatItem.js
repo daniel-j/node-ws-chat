@@ -1,5 +1,6 @@
 
-define(function () {
+//define(function () {
+var ChatItem = (function () {
 	
 	function zeroFill(v) {
 		if (v <= 9) {
@@ -42,6 +43,6 @@ define(function () {
 	ChatItem.TYPE_CHAT = 0;
 	ChatItem.TYPE_CONSOLE = 1;
 
-
 	return ChatItem;
-});
+}());
+//});
