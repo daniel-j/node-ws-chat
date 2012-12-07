@@ -163,6 +163,9 @@ input[type=submit][disabled], button[disabled] {
 #connectView #inputUsername {
 	width: 180px;
 }
+#connectView #loginForm #loginErrorNode {
+	color: #F33;
+}
 #connectView footer {
 	color: rgba(255, 255, 255, 0.3);
 	font-size: 12px;
@@ -186,31 +189,43 @@ input[type=submit][disabled], button[disabled] {
 	-webkit-user-select: all;
 	-moz-user-select: all;
 	user-select: all;
+	font-size: 14px;
+	line-height: 115%;
 }
+
 #chatView #chatContainer .post {
 	white-space: nowrap;
 	margin-top: 2px;
 }
-#chatView #chatContainer .post .time {
+#chatView #chatContainer .post .timestamp {
 	display: inline-block;
-	color: rgba(255, 255, 255, 0.4);
-	width: 58px;
+	color: rgba(255, 255, 255, 0.5);
+	width: 52px;
 }
-#chatView #chatContainer .post .username {
-	color: rgba(255, 255, 255, 0.7);
+#chatView #chatContainer .post .nick {
+	color: rgba(255, 255, 255, 0.8);
+	padding-right: 7px;
 }
-#chatView #chatContainer .post .username:before, #chatView #chatContainer .post .username:after {
-	color: rgba(255, 255, 255, 0.4);
+#chatView #chatContainer .post .nick:before, #chatView #chatContainer .post .nick:after {
+	color: rgba(255, 255, 255, 0.3);
 }
-#chatView #chatContainer .post .username:before {
+#chatView #chatContainer .post .nick:before {
 	content: "<";
 }
-#chatView #chatContainer .post .username:after {
-	content: ">\a0";
+#chatView #chatContainer .post .nick:after {
+	content: ">";
 }
 #chatView #chatContainer .post .message {
 	padding-right: 20px;
 }
+#chatView #chatContainer .post.console .message {
+	color: rgba(255, 255, 255, 0.6);
+}
+#chatView #chatContainer .post.console.error .message {
+	font-weight: bold;
+	color: #F33;
+}
+
 #chatView #userlist {
 	position: absolute;
 	right: 0px;
@@ -252,7 +267,7 @@ input[type=submit][disabled], button[disabled] {
 	line-height: 100%;
 	font-size: 16px;
 }
-#chatView #submitSend {
+#chatView #submitChat {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;

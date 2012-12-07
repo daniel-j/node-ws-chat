@@ -5,14 +5,12 @@ var ViewManager = (function () {
 
 	function ViewManager() {
 		this.views = {};
-		//this.viewList = [];
 
 		var viewElements = document.querySelectorAll('.view');
 		
 		for (var i = 0; i < viewElements.length; i++) {
 			var view = new View(viewElements[i]);
 			this.views[view.name] = view;
-			//this.viewList.push(view);
 		}
 	}
 

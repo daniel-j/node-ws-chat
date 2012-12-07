@@ -27,15 +27,14 @@ var UserManager = (function () {
 
 	UserManager.prototype.addUser = function (info) {
 		var user = new UserlistItem(info);
-		console.log('Adding ', user.nick);
 
 		this.users.push(user);
 		this.sortedUsers.push(user); // Will sort later
 		this.nodeQueue.push(user);
+		return user;
 	}
 	UserManager.prototype.removeUser = function (index) {
 		var user = this.users[index];
-		console.log('Removing ', user.nick);
 		this.userlist.removeChild(user.node);
 
 		this.users.splice(index, 1);
@@ -69,6 +68,9 @@ var UserManager = (function () {
 		while (this.users.length > 0) {
 			this.removeUser(0);
 		}
+	}
+	UserManager.prototype.getByIndex = function (index) {
+		return this.users[index];
 	}
 
 	return UserManager;

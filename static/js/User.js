@@ -40,7 +40,7 @@ var User = (function () {
 	return User;
 }());
 
-// To make it work in node.js
+// To make it work as a node.js module aswell
 if (typeof module !== 'undefined') {
 	module.exports = User;
 }

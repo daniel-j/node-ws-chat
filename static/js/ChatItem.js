@@ -26,16 +26,18 @@ var ChatItem = (function () {
 
 		this.messageNode = document.createElement('span');
 		this.messageNode.classList.add('message');
-		this.messageNode.textContent = config.message;
+		this.messageNode.innerHTML = config.message;
 
 		if (this.type === ChatItem.TYPE_CHAT) {
 			this.node.appendChild(this.timestampNode);
 			this.node.appendChild(this.nickNode);
 			this.node.appendChild(this.messageNode);
-			this.nickNode.textContent = user.nick;
+			this.nickNode.textContent = this.user.nick;
+			this.node.classList.add('chat');
 		} else if (config.type === ChatItem.TYPE_CONSOLE) {
 			this.node.appendChild(this.timestampNode);
 			this.node.appendChild(this.messageNode);
+			this.node.classList.add('console');
 		} else {
 			throw "Invalid type "+config.type;
 		}

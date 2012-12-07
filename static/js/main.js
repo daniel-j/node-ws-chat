@@ -1,6 +1,5 @@
 
 //require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'], function ( ViewManager,   LoginManager,   UserManager,   ChatManager ) {
-
 (function () {
 	'use strict';
 	
@@ -9,6 +8,8 @@
 
 	var ws = null;
 	var myNick = '';
+	var isLoggedIn = false;
+	var isOpen = false;
 
 	var views        = new ViewManager();
 	var loginManager = new LoginManager();
@@ -33,6 +34,7 @@
 	}
 
 	function wsOpen(e) {
+		isOpen = true;
 		sendPacket({nick: myNick});
 	}
 	function wsMessage(e) {
@@ -40,11 +42,13 @@
 		
 		if (typeof data.nick !== 'undefined') {
 			if (typeof data.index === 'undefined') { // Your nick/welcome
-				
+				isLoggedIn = true;
 				hideConnect();
+				chat.clear();
+				chat.enable();
 
 			} else {
-
+				// Rename?
 			}
 		}
 		if (typeof data.userlist !== 'undefined') {
@@ -55,16 +59,27 @@
 			userlist.update();
 		}
 		if (typeof data.join !== 'undefined') {
-			userlist.addUser(data.join);
+			var user = userlist.addUser(data.join);
+			chat.addConsole('<strong>'+utils.html2text(user.nick)+'</strong> joined the room');
 			userlist.update();
 		}
 		if (typeof data.leave !== 'undefined') {
+			var user = userlist.getByIndex(data.leave);
+			chat.addConsole('<strong>'+utils.html2text(user.nick)+'</strong> left the room');
 			userlist.removeUser(data.leave);
 		}
 		if (typeof data.error !== 'undefined') {
-			alert(data.error);
-			loginManager.logout();
-			showConnect();
+			if (isLoggedIn) {
+				chat.addConsole(data.error, 'error');
+			} else {
+				loginManager.loginFailed(data.error);
+			}
+			
+		}
+		if (typeof data.chat !== 'undefined') {
+			var timestamp = new Date(data.timestamp);
+			var user = userlist.getByIndex(data.index);
+			chat.addChat(user, utils.html2text(data.chat), timestamp);
 		}
 	}
 	function wsClose(e) {
@@ -73,6 +88,16 @@
 		ws.removeEventListener('close', 	wsClose);
 		ws.removeEventListener('error', 	wsError);
 		ws = null;
+		
+		if (isLoggedIn) {
+			chat.disable();
+			chat.addConsole("Disconnected from server ("+e.code+")", 'error');
+		} else {
+			if (!isOpen) {
+				loginManager.loginFailed("Unable to connect to server");
+			}
+			
+		}
 	}
 	function wsError(e) {
 		alert("WebSocket error");
@@ -87,6 +112,15 @@
 		ws.addEventListener('message', 	wsMessage);
 		ws.addEventListener('close', 	wsClose);
 		ws.addEventListener('error', 	wsError);
+
+		isLoggedIn = false;
+		isOpen = false;
+	}
+
+	chat.sendChatCallback = function (message) {
+		sendPacket({
+			chat: message
+		});
 	}
 }());
 //});

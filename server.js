@@ -6,11 +6,11 @@ var port = 8080;
 var http = require('http');
 var express = require('express');
 var WebSocketServer = require('ws').Server;
-//var reqjs = require('requirejs');
+var User = require(__dirname + '/static/js/User.js');
 
+//var reqjs = require('requirejs');
 // This module is shared between server and client, using require.js
 //var User = reqjs('static/js/User');
-var User = require(__dirname + '/static/js/User.js');
 
 var app = express();
 app.use(express.static(__dirname + '/static'));
@@ -43,6 +43,12 @@ function broadcastPacket(obj, except) {
 	}
 }
 
+function getUserlist() {
+	return users.filter(function (user) {
+		return user.ready;
+	});
+}
+
 function nickExists(nick) {
 	for (var i = 0; i < users.length; i++) {
 		if (nick === users[i].nick) {
@@ -69,10 +75,13 @@ wss.on('connection', function (ws) {
 
 			if (!user.ready) { // New user
 
+				console.log(nick+' is trying to join');
+
 				if (nickExists(nick)) {
 
 					// sendError closes socket
 					sendError(ws, "Nick is in use");
+					ws.close();
 					return;
 
 				} else {
@@ -80,10 +89,12 @@ wss.on('connection', function (ws) {
 					// Save nick
 					user.update({nick: nick, ready: true});
 
+					console.log(nick+' joined');
+
 					// Send userlist and new nick to joining user
 					sendPacket(ws, {
 						nick: user.nick,
-						userlist: users
+						userlist: getUserlist()
 					});
 
 					// Send join notification to all other users
@@ -155,10 +166,13 @@ wss.on('connection', function (ws) {
 	ws.on('close', function () {
 
 		var index = users.indexOf(user);
+		if (user.ready) {
+			broadcastPacket({
+				leave: index
+			}, ws);
+			console.log(user.nick+' left');
+		}
 
-		broadcastPacket({
-			leave: index
-		}, ws);
 
 		// Remove user from array
 		users.splice(index, 1);

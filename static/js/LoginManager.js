@@ -5,27 +5,32 @@ var LoginManager = (function () {
 
 	function LoginManager() {
 		var self = this;
-		this.loginForm = document.querySelector('#loginForm');
-		this.inputNick = loginForm.querySelector('#inputNick');
-		this.submitLogin = loginForm.querySelector('#submitLogin');
+
+		this.loginAttemptCallback = null;
 
 		this.canLogin = true;
-		this.loginAttemptCallback = null;
+		this.loginForm = document.querySelector('#loginForm');
+		this.inputNick = this.loginForm.querySelector('#inputNick');
+		this.submitLogin = this.loginForm.querySelector('#submitLogin');
+		this.errorNode = this.loginForm.querySelector('#loginErrorNode');
 		this.disableElements = [this.inputNick, this.submitLogin];
 
+		
 		loginForm.addEventListener('submit', function (e) {
 			e.preventDefault();
 			var nick = self.inputNick.value.trim();
 			if (self.canLogin && nick.length > 0) {
 				
-				self.disableElements.forEach(function (elem) {
-					elem.disabled = true;
-				});
+				self.errorNode.innerHTML = '';
 
-				self.canLogin = false;
+				self.disable();
+
 				self.loginAttemptCallback(nick);
 			}
 		}, false);
+
+		this.disable(false);
+		this.inputNick.focus();
 	}
 
 	LoginManager.prototype.disable = function (doDisable) {
@@ -41,6 +46,7 @@ var LoginManager = (function () {
 		this.disable(false);
 		this.inputNick.focus();
 		this.canLogin = true;
+		this.errorNode.innerHTML = reason || '';
 	}
 
 	LoginManager.prototype.logout = function (clearForm) {
