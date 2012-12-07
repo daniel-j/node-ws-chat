@@ -113,10 +113,8 @@ input[type=submit][disabled], button[disabled] {
 	transition: left .3s ease-in-out, top .3s ease-in-out, opacity .3s ease-in-out;
 	overflow: auto;
 	opacity: 0;
-	visibility: hidden;
 }
 .view.active {
-	visibility: visible;
 	opacity: 1;
 }
 .view.left {

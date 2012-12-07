@@ -77,7 +77,7 @@ wss.on('connection', function (ws) {
 				} else {
 					
 					// Save nick
-					user.update({nick: nick});
+					user.update({nick: nick, ready: true});
 
 					// Send userlist and new nick to joining user
 					sendPacket(ws, {
@@ -89,8 +89,6 @@ wss.on('connection', function (ws) {
 					broadcastPacket({
 						join: user
 					}, ws);
-
-					user.ready = true;
 				}
 
 			} else { // User changed nick
@@ -115,7 +113,17 @@ wss.on('connection', function (ws) {
 				}
 
 			}
+		}
 
+		if (user.ready) {
+			if (typeof data.chat !== 'undefined') {
+				var message = data.chat;
+				broadcastPacket({
+					chat: message,
+					timestamp: new Date(),
+					index: users.indexOf(user)
+				});
+			}
 		}
 	}
 

@@ -48,7 +48,6 @@ define(['UserlistItem'], function (UserlistItem) {
 		var self = this;
 		this.sortedUsers.sort(userlistSort);
 		
-
 		this.nodeQueue.forEach(function (user) {
 			var index = self.users.indexOf(user);
 			var sortIndex = self.sortedUsers.indexOf(user);

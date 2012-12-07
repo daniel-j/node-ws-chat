@@ -28,6 +28,9 @@ define(['ViewManager'], function (viewManager) {
 	}
 
 	LoginManager.prototype.disable = function (doDisable) {
+		if (typeof doDisable === 'undefined') {
+			doDisable = true;
+		}
 		this.disableElements.forEach(function (elem) {
 			elem.disabled = doDisable;
 		});

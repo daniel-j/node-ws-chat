@@ -1,19 +1,19 @@
 
-require(['ViewManager', 'LoginManager', 'UserManager'], function (ViewManager, LoginManager, UserManager) {
+require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'],
+	function ( ViewManager,   LoginManager,   UserManager,   ChatManager ) {
 	'use strict';
 	
 	var wsHost = 'ws://'+document.location.host+'/';
 	var wsProtocol = 'chat';
 
 	var ws = null;
-	var me = {
-		nick: '',
-		id: 0
-	};
+	var myNick = '';
+	var me = null;
 
-	var views = new ViewManager();
+	var views        = new ViewManager();
 	var loginManager = new LoginManager();
-	var userlist = new UserManager();
+	var userlist     = new UserManager();
+	var chat         = new ChatManager();
 
 	function hideConnect() {
 		views.addStateFor('connect', 'top');
@@ -33,7 +33,7 @@ require(['ViewManager', 'LoginManager', 'UserManager'], function (ViewManager, L
 	}
 
 	function wsOpen(e) {
-		sendPacket({nick: me.nick});
+		sendPacket({nick: myNick});
 	}
 	function wsMessage(e) {
 		var data = JSON.parse(e.data);
@@ -61,6 +61,11 @@ require(['ViewManager', 'LoginManager', 'UserManager'], function (ViewManager, L
 		if (typeof data.leave !== 'undefined') {
 			userlist.removeUser(data.leave);
 		}
+		if (typeof data.error !== 'undefined') {
+			alert(data.error);
+			loginManager.logout();
+			showConnect();
+		}
 	}
 	function wsClose(e) {
 		ws.removeEventListener('open', 		wsOpen);
@@ -68,26 +73,20 @@ require(['ViewManager', 'LoginManager', 'UserManager'], function (ViewManager, L
 		ws.removeEventListener('close', 	wsClose);
 		ws.removeEventListener('error', 	wsError);
 		ws = null;
-		loginManager.logout();
-		showConnect();
 	}
 	function wsError(e) {
-
+		alert("WebSocket error");
+		console.log(e);
 	}
 
 	loginManager.loginAttemptCallback = function (nick) {
-
-		me.nick = nick;
+		myNick = nick;
 		console.log(wsHost);
 		ws = new WebSocket(wsHost, wsProtocol);
 		ws.addEventListener('open', 	wsOpen);
 		ws.addEventListener('message', 	wsMessage);
 		ws.addEventListener('close', 	wsClose);
 		ws.addEventListener('error', 	wsError);
-
-		
-		
-		
 	}
 	
 });

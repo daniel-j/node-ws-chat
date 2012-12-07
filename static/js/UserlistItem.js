@@ -6,8 +6,6 @@ define(['User'], function (User) {
 	function UserlistItem(config) {
 		this.super = Object.getPrototypeOf(Object.getPrototypeOf(this)); // or User.prototype
 
-		this.nick = '';
-
 		this.node = document.createElement('div');
 		this.node.classList.add('userlistitem');
 		this.nickNode = document.createElement('span');
