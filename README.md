@@ -6,5 +6,5 @@ Created for a JavaScript college course.
 
 How to use:
 
-1. Install dependencies: `npm install ws express requirejs`
+1. Install dependencies: `npm install ws express`
 2. Run: `node server`

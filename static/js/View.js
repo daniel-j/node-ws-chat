@@ -1,5 +1,6 @@
 
-define(function () {
+//define(function () {
+var View = (function () {
 	'use strict';
 
 	var availableStates = ['left', 'right', 'top', 'bottom', 'behind'];
@@ -50,5 +51,5 @@ define(function () {
 	}
 	
 	return View;
-
-});
+}());
+//});

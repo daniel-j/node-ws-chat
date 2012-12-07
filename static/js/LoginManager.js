@@ -1,5 +1,6 @@
 
-define(['ViewManager'], function (viewManager) {
+//define(function () {
+var LoginManager = (function () {
 	'use strict';
 
 	function LoginManager() {
@@ -54,5 +55,5 @@ define(['ViewManager'], function (viewManager) {
 	
 	
 	return LoginManager;
-});
-
+}());
+//});

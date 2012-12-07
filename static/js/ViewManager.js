@@ -1,5 +1,6 @@
 
-define(['View'], function (View) {
+//define(['View'], function (View) {
+var ViewManager = (function () {
 	'use strict';
 
 	function ViewManager() {
@@ -24,6 +25,5 @@ define(['View'], function (View) {
 	
 	return ViewManager;
 
-});
-
-
+}());
+//});

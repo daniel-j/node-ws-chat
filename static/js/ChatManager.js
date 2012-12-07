@@ -1,5 +1,6 @@
 
-define(['ChatItem'], function (ChatItem) {
+//define(['ChatItem'], function (ChatItem) {
+var ChatManager = (function () {
 
 	function ChatManager() {
 		var self = this;
@@ -42,4 +43,5 @@ define(['ChatItem'], function (ChatItem) {
 	}
 
 	return ChatManager;
-});
+}());
+//});

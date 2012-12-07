@@ -1,5 +1,6 @@
 
-define(['UserlistItem'], function (UserlistItem) {
+//define(['UserlistItem'], function (UserlistItem) {
+var UserManager = (function () {
 	'use strict';
 
 	// Sort alphabetically by nick
@@ -71,4 +72,5 @@ define(['UserlistItem'], function (UserlistItem) {
 	}
 
 	return UserManager;
-});
+}());
+//});

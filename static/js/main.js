@@ -1,6 +1,7 @@
 
-require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'],
-	function ( ViewManager,   LoginManager,   UserManager,   ChatManager ) {
+//require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'], function ( ViewManager,   LoginManager,   UserManager,   ChatManager ) {
+
+(function () {
 	'use strict';
 	
 	var wsHost = 'ws://'+document.location.host+'/';
@@ -8,7 +9,6 @@ require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'],
 
 	var ws = null;
 	var myNick = '';
-	var me = null;
 
 	var views        = new ViewManager();
 	var loginManager = new LoginManager();
@@ -88,5 +88,5 @@ require(     ['ViewManager', 'LoginManager', 'UserManager', 'ChatManager'],
 		ws.addEventListener('close', 	wsClose);
 		ws.addEventListener('error', 	wsError);
 	}
-	
-});
+}());
+//});

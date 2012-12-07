@@ -1,5 +1,6 @@
 
-define(['User'], function (User) {
+//define(['User'], function (User) {
+var UserlistItem = (function () {
 	'use strict';
 
 	// UserlistItem inherits from User.. da magicks!
@@ -30,4 +31,5 @@ define(['User'], function (User) {
 	}
 
 	return UserlistItem;
-});
+}());
+//});

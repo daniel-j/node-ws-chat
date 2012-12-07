@@ -6,10 +6,11 @@ var port = 8080;
 var http = require('http');
 var express = require('express');
 var WebSocketServer = require('ws').Server;
-var reqjs = require('requirejs');
+//var reqjs = require('requirejs');
 
 // This module is shared between server and client, using require.js
-var User = reqjs('static/js/User');
+//var User = reqjs('static/js/User');
+var User = require(__dirname + '/static/js/User.js');
 
 var app = express();
 app.use(express.static(__dirname + '/static'));

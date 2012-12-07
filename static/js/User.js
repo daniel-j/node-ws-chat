@@ -1,5 +1,6 @@
 
-define(function () {
+//define(function () {
+var User = (function () {
 	'use strict';
 
 	var isServer = typeof process !== 'undefined';
@@ -37,4 +38,12 @@ define(function () {
 	}
 
 	return User;
-});
+}());
+
+// To make it work in node.js
+if (typeof module !== 'undefined') {
+	module.exports = User;
+}
+
+//});
+
