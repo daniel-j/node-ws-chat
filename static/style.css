@@ -165,6 +165,8 @@ input[type=submit][disabled], button[disabled] {
 }
 #connectView #loginForm #loginErrorNode {
 	color: #F33;
+	font-weight: bold;
+	margin-top: 5px;
 }
 #connectView footer {
 	color: rgba(255, 255, 255, 0.3);

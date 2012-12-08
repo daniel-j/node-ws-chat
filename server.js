@@ -120,7 +120,7 @@ wss.on('connection', function (ws) {
 
 				} else { // Nick exists
 
-					sendConsole(ws, "Nick is in use");
+					sendConsole(ws, "<strong>Nick is in use</strong>");
 
 				}
 
