@@ -51,7 +51,7 @@ function getUserlist() {
 
 function nickExists(nick) {
 	for (var i = 0; i < users.length; i++) {
-		if (nick === users[i].nick) {
+		if (nick.toLowerCase() === users[i].nick.toLowerCase()) {
 			return true;
 		}
 	}
@@ -62,6 +62,8 @@ function fixNick(nick) {
 }
 
 wss.on('connection', function (ws) {
+
+	console.log(ws.upgradeReq.headers.origin);
 
 	var user = new User({socket: ws});
 
@@ -176,5 +178,9 @@ wss.on('connection', function (ws) {
 
 		// Remove user from array
 		users.splice(index, 1);
+	});
+
+	ws.on('error', function () {
+		console.log('error', arguments);
 	});
 });

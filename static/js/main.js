@@ -3,26 +3,29 @@
 (function () {
 	'use strict';
 	
-	var wsHost = 'ws://'+document.location.host+'/';
+	var wsHost = 'ws://'+document.location.hostname+':8080/';
 	var wsProtocol = 'chat';
 
 	var ws = null;
 	var myNick = '';
 	var isLoggedIn = false;
 	var isOpen = false;
+	var connectHidden = false;
 
-	var views        = new ViewManager();
-	var loginManager = new LoginManager();
-	var userlist     = new UserManager();
-	var chat         = new ChatManager();
+	var views    = new ViewManager();
+	var login    = new LoginManager();
+	var userlist = new UserManager();
+	var chat     = new ChatManager();
 
 	function hideConnect() {
 		views.addStateFor('connect', 'top');
 		views.removeStateFor('chat', 'behind');
+		connectHidden = true;
 	}
 	function showConnect() {
 		views.removeStateFor('connect', 'top');
 		views.addStateFor('chat', 'behind');
+		connectHidden = false;
 	}
 
 	function sendPacket(obj) {
@@ -43,9 +46,12 @@
 		if (typeof data.nick !== 'undefined') {
 			if (typeof data.index === 'undefined') { // Your nick/welcome
 				isLoggedIn = true;
+				if (!connectHidden) {
+					chat.clear();
+				}
 				hideConnect();
-				chat.clear();
 				chat.enable();
+				myNick = data.nick;
 
 			} else {
 				// Rename?
@@ -72,7 +78,7 @@
 			if (isLoggedIn) {
 				chat.addConsole(data.error, 'error');
 			} else {
-				loginManager.loginFailed(data.error);
+				login.failed(data.error);
 			}
 			
 		}
@@ -94,17 +100,17 @@
 			chat.addConsole("Disconnected from server ("+e.code+")", 'error');
 		} else {
 			if (!isOpen) {
-				loginManager.loginFailed("Unable to connect to server");
+				login.failed("Unable to connect to server");
 			}
 			
 		}
 	}
 	function wsError(e) {
-		alert("WebSocket error");
-		console.log(e);
+		//alert("WebSocket error");
+		//console.log(e);
 	}
 
-	loginManager.loginAttemptCallback = function (nick) {
+	login.loginAttemptCallback = function (nick) {
 		myNick = nick;
 		
 		ws = new WebSocket(wsHost, wsProtocol);

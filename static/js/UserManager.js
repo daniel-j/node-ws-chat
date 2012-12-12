@@ -27,7 +27,7 @@ var UserManager = (function () {
 
 	UserManager.prototype.addUser = function (info) {
 		var user = new UserlistItem(info);
-
+		
 		this.users.push(user);
 		this.sortedUsers.push(user); // Will sort later
 		this.nodeQueue.push(user);

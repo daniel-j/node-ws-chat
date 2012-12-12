@@ -29,6 +29,7 @@ var ChatManager = (function () {
 			elem.disabled = true;
 		});
 		this.canChat = false;
+		this.inputChat.blur();
 	}
 	ChatManager.prototype.enable = function () {
 		this.disableElements.forEach(function (elem) {
@@ -54,6 +55,7 @@ var ChatManager = (function () {
 	ChatManager.prototype.addItem = function (item) {
 		this.log.push(item);
 		this.chatContainer.appendChild(item.node);
+		this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
 	}
 
 	ChatManager.prototype.clear = function () {

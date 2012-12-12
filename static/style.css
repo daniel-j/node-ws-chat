@@ -207,9 +207,11 @@ input[type=submit][disabled], button[disabled] {
 #chatView #chatContainer .post .nick {
 	color: rgba(255, 255, 255, 0.8);
 	padding-right: 7px;
+	font-weight: bold;
 }
 #chatView #chatContainer .post .nick:before, #chatView #chatContainer .post .nick:after {
 	color: rgba(255, 255, 255, 0.3);
+	font-weight: normal;
 }
 #chatView #chatContainer .post .nick:before {
 	content: "<";
@@ -235,15 +237,19 @@ input[type=submit][disabled], button[disabled] {
 	bottom: 52px;
 	width: 144px;
 	border-left: 6px solid #33342D;
-	overflow: auto;
 	padding: 3px 0px;
+	-webkit-user-select: all;
+	-moz-user-select: all;
+	user-select: all;
 }
 #chatView #userlist .userlistitem {
 	padding: 2px;
 	padding-left: 3px;
 	white-space: nowrap;
-	color: rgba(255, 255, 255, 0.8);
-	font-size: 13px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 14px;
 }
 #chatView #userlist .userlistitem:nth-child(2n) {
 	background-color: rgba(0, 0, 0, 0.15);

@@ -42,7 +42,7 @@ var LoginManager = (function () {
 		});
 	}
 
-	LoginManager.prototype.loginFailed = function (reason) {
+	LoginManager.prototype.failed = function (reason) {
 		this.disable(false);
 		this.inputNick.focus();
 		this.canLogin = true;

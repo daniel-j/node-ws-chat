@@ -16,10 +16,9 @@ var View = (function () {
 		}
 	}
 	
-	View.prototype.setState = function (states) {
+	/*View.prototype.setState = function (states) {
 		states = typeof states === 'object' && states.length > 0? states : arguments;
-
-	}
+	}*/
 
 	View.prototype.addState = function () {
 		for (var i = 0; i < arguments.length; i++) {
