@@ -22,8 +22,18 @@ server.listen(port, function () {
 
 var users = [];
 
+function sendData(ws, data) {
+	try {
+		ws.send(data);
+	} catch (e) {
+		console.error("Couldn't send!", e);
+		ws.close();
+	}
+}
 function sendPacket(ws, obj) {
-	ws.send(JSON.stringify(obj));
+	var data = JSON.stringify(obj);
+	sendData(ws, data);
+	console.log("SEND to a user:", data);
 }
 function sendError(ws, message) {
 	sendPacket(ws, {error: message});
@@ -36,9 +46,10 @@ function sendConsole(ws, message) {
 // Only broadcast to "authenticated" users (user.ready === true)
 function broadcastPacket(obj, except) {
 	var data = JSON.stringify(obj);
+	console.log("BROADCAST SEND:", data);
 	for (var i = 0; i < users.length; i++) {
 		if (users[i].socket !== except && users[i].ready) {
-			users[i].socket.send(data);
+			sendData(users[i].socket, data);
 		}
 	}
 }
@@ -63,20 +74,28 @@ function fixNick(nick) {
 
 wss.on('connection', function (ws) {
 
-	console.log(ws.upgradeReq.headers.origin);
+	ws._socket.setTimeout(60*1000);
+
+	ws._socket.once('timeout', function () {
+		console.log('TIMEOUT!');
+		ws.close();
+	});
+
+	console.log("CONNECT protocol: "+ws.protocol+" version: "+ws.protocolVersion+" supports: "+ws.supports+" origin: "+ws.upgradeReq.headers.origin);
 
 	var user = new User({socket: ws});
 
 	users.push(user);
 
 	function handleData(data) {
+
 		if (typeof data.nick !== 'undefined' && data.nick.length > 0) {
 
 			// Remove surrounding whitewpace.. might add more limitations later on
 			var nick = fixNick(data.nick);
 
 			if (!user.ready) { // New user
-
+				
 				console.log(nick+' is trying to join');
 
 				if (nickExists(nick)) {
@@ -121,7 +140,7 @@ wss.on('connection', function (ws) {
 
 
 				} else { // Nick exists
-
+					
 					sendConsole(ws, "<strong>Nick is in use</strong>");
 
 				}
@@ -130,6 +149,7 @@ wss.on('connection', function (ws) {
 		}
 
 		if (user.ready) {
+
 			if (typeof data.chat !== 'undefined') {
 				var message = data.chat;
 				broadcastPacket({
@@ -138,11 +158,14 @@ wss.on('connection', function (ws) {
 					index: users.indexOf(user)
 				});
 			}
+	
 		}
 	}
 
 	// Got a packet from client
 	ws.on('message', function (message, flags) {
+
+		console.log("RECIEVED from "+(user.nick || 'guest')+":", message);
 
 		var data;
 
@@ -166,7 +189,7 @@ wss.on('connection', function (ws) {
 
 	// Client got disconnected
 	ws.on('close', function () {
-
+		console.log("CLOSE "+(user.nick || 'guest'));
 		var index = users.indexOf(user);
 		if (user.ready) {
 			broadcastPacket({
@@ -179,8 +202,8 @@ wss.on('connection', function (ws) {
 		// Remove user from array
 		users.splice(index, 1);
 	});
-
+	
 	ws.on('error', function () {
-		console.log('error', arguments);
+		console.log('ERROR', arguments);
 	});
 });

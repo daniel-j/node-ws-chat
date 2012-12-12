@@ -61,17 +61,17 @@
          <article>
             <h3>Ett chattprogram i JavaScript, från grunden</h3>
             <ul>
-               <li>Demo av slutresultatet</li>
+               <li>Demo av programmet</li>
                <li>Kodstruktur</li>
                <li>De olika komponenterna/modulerna</li>
-               <li>Ett chatt-protokoll</li>
+               <li>Ett chattprotokoll</li>
                <li>Serversidan</li>
                <li>Fler exempel med WebSockets</li>
             </ul>
          </article>
          <article class='fill'>
-            
-            <iframe src='http://localhost:8080/'></iframe>
+            <h3 style="padding-top: 0px; line-height: 20px">Demolänk: <a target="_blank" href="http://193.11.183.246:8080/">http://193.11.183.246:8080/</a></h3>
+            <iframe src='http://localhost:8080/' style="margin-top: 70px; height: 698px"></iframe>
          </article>
 
          <article>
@@ -90,7 +90,7 @@ var UserManager = (function () {
    
    function UserManager() {
       this.users = [];
-      this.userlist = document.querySelector('#userlist');
+      // ...
    }
 
    UserManager.prototype.addUser = function (info) {
@@ -115,7 +115,7 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
    function UserlistItem(config) {
       this.super = User.prototype; // super methods
 
-      // properties goes here
+      // ...
 
       this.update(config);
    }
