@@ -15,10 +15,10 @@ var User = require(__dirname + '/static/js/User.js');
 var app = express();
 app.use(express.static(__dirname + '/static'));
 var server = http.createServer(app);
-var wss = new WebSocketServer({server: server});
 server.listen(port, function () {
 	console.log("Chat server started on port "+port);
 });
+var wss = new WebSocketServer({server: server});
 
 var users = [];
 
@@ -85,8 +85,6 @@ wss.on('connection', function (ws) {
 
 	var user = new User({socket: ws});
 
-	users.push(user);
-
 	function handleData(data) {
 
 		if (typeof data.nick !== 'undefined' && data.nick.length > 0) {
@@ -109,6 +107,8 @@ wss.on('connection', function (ws) {
 					
 					// Save nick
 					user.update({nick: nick, ready: true});
+
+					users.push(user);
 
 					console.log(nick+' joined');
 
@@ -191,13 +191,12 @@ wss.on('connection', function (ws) {
 	ws.on('close', function () {
 		console.log("CLOSE "+(user.nick || 'guest'));
 		var index = users.indexOf(user);
-		if (user.ready) {
+		if (user.ready && index !== -1) {
 			broadcastPacket({
 				leave: index
 			}, ws);
 			console.log(user.nick+' left');
 		}
-
 
 		// Remove user from array
 		users.splice(index, 1);

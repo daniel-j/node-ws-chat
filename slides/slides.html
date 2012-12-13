@@ -75,15 +75,7 @@
          </article>
 
          <article>
-            <h3>Kodstruktur</h3>
-            <ul>
-               <li>Objektorienterat/prototypbaserat</li>
-               <li>Exempel på arv av "klasser"</li>
-            </ul>
-         </article>
-
-         <article>
-            <h3>Kodstruktur</h3>
+            <h3>Kodstruktur, objektorienterat/prototypbaserat</h3>
             <pre>
 var UserManager = (function () {
    'use strict';
@@ -107,7 +99,7 @@ var UserManager = (function () {
          </article>
 
          <article class="nobackground">
-            <h3>Kodstruktur med arv</h3>
+            <h3>Kodstruktur med exempel av arv</h3>
             <pre>
 var UserlistItem = (function () { // inherits from User.. da magicks!
    'use strict';
@@ -149,8 +141,9 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
                <li>main.js</li>
                <li>ChatManager &amp; ChatItem</li>
                <li>UserManager, UserlistItem &amp; User</li>
-               <li>LoginManager</li>
-               <li>ViewManager &amp; View</li>
+               <!--<li>LoginManager</li>
+               <li>ViewManager &amp; View</li>-->
+               <li>Samt två moduler som inte är specfika för programmet (LoginManager &amp; ViewManager)</li>
             </ul>
          </article>
 
@@ -181,7 +174,7 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
             </ul>
          </article>
 
-         <article>
+         <!--<article>
             <h4>LoginManager</h4>
             <ul>
                <li>Denna hanterar login-formuläret, samt har en publik callback som anropas från main.js när man blir inloggad/utloggad</li>
@@ -196,16 +189,181 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
                <li>Använder sig av data-attribut och CSS-klasser med node.classList</li>
             </ul>
 
+         </article>-->
+
+         <article>
+            <h4>Ett chattprotokoll</h4>
+            <h5 style="line-height: 0px; margin: 0px; padding: 0px;">JSON-strängar som skickas mellan klient och server</h5>
+            <ul>
+               <li>Klienten skickar sitt nick till servern, join-request</li>
+               <li>Servern kollar om nicket är upptaget, annars släpper den in användaren i chatten, join-accept</li>
+               <li>Servern skickar då användarlistan till klienten samt en join-notify till de andra</li>
+               <li>Klienten skickar keep-alive-meddelanden var 20:e sekund</li>
+               <li>Servern tar emot chattmeddelanden från klienten och broadcastar till de andra</li>
+               <li>Om en klient disconnectar skickar servern en left-notify till de andra</li>
+            </ul>
          </article>
 
          <article>
             <h4></h4>
          </article>
 
+         <article class="nobackground">
+            <h5>Protokollet sett från servern</h5>
+            <pre>
+CONNECT // New user connected to WebSocket, set up event listeners, no action
+RECIEVED: {"nick":"djazz"} // This is a valid, unused nick, for this example
+SEND: {"nick": "djazz","userlist": [ // This is the response to joining client
+   {"nick":"mos"}, {"nick":"bobbzorzen"}, {"nick":"djazz"}
+]}
+// Tell others that a new user joined
+BROADCAST TO OTHERS: {"join": {"nick": "djazz"}}
+
+// Got a keep-alive packet from someone, "net" takes care of if user timeout
+// If the server haven't got a packet within 30s it closes the socket
+RECIEVED: {"heartbeat": 1}
+
+// Got a chat message from djazz
+RECIEVED: {"chat": "Hello world!"}
+// Send it to everyone, including to sender. Put a timestamp and sender index
+BROADCAST TO ALL: {"chat": "Hello world!",
+                   "timestamp": "2012-12-13T16:23:47.661Z", "index": 2}
+CLOSED SOCKET // Someone disconnected, tell others (bobbzorzen left the room)
+BROADCAST TO OTHERS: {"leave": 1}
+//The userlist array now contain mos at slot 0 and djazz at 1
+</pre>
+         </article>
+
+         <article class="nobackground">
+            <h5 style="position: absolute; top: 0px">WebSockets på klientsidan</h5>
+            <pre>
+var ws;
+function wsMessage(e) {
+   var data = JSON.parse(e.data);
+   // ...
+   if (typeof data.userlist !== 'undefined') {
+      // got userlist, call users.addUser with each
+   }
+   if (typeof data.chat !== 'undefined') {
+      var timestamp = new Date(data.timestamp);
+      var user = userlist.getByIndex(data.index);
+      chat.addChat(user, utils.html2text(data.chat), timestamp);
+   }
+   // ...
+}
+login.loginAttemptCallback = function (nick) {
+   ws = new WebSocket(wsHost, wsProtocol);
+   ws.addEventListener('open',      wsOpen);
+   ws.addEventListener('message',   wsMessage);
+   ws.addEventListener('close',     wsClose);
+   ws.addEventListener('error',     wsError);
+   // ...
+}
+// ...
+</pre>
+         </article>
+
+         <article>
+            <h4>Serversidan</h4>
+            <ul>
+               <li>node.js kör WebSocket-modulen ws och webbservern express</li>
+               <li>ws är den snabbaste och mest low-level WebSocket-modulen för node.js</li>
+               <li>express för statiskt innehåll, lätt att testa utan att behöva en annan webbserver</li>
+               <li>Serverkoden består av lite hjälpfunktioner samt en connection-listener för WebSockets</li>
+            </ul>
+         </article>
+
+         <article class="nobackground">
+            <h5>En WebSocket-server med ws</h5>
+            <pre>
+// ...
+var wss = new WebSocketServer({server: server});
+
+wss.on('connection', function (ws) {
+   // Save user in an array
+   var user = new User(...);
+   users.push(user);
+
+   // Got a packet from client
+   ws.on('message', function (message) {
+      // Parse JSON and identify packets
+   });
+
+   // Client got disconnected
+   ws.on('close', function () {
+      users.splice(users.indexOf(user), 1); // Remove user from array
+      // tell others that user left ...
+   });
+
+});
+</pre>
+         </article>
+
+         <article class="nobackground">
+            <pre>
+function sendData(ws, data) {
+   try { ws.send(data); } catch (e) { ws.close(); }
+}
+function broadcastPacket(obj, except) {
+   var data = JSON.stringify(obj);
+   for (var i = 0; i &lt; users.length; i++) {
+      if (users[i].socket !== except &amp;&amp; users[i].ready) {
+         sendData(users[i].socket, data);
+      }
+   }
+}
+function getUserlist() {
+   return users.filter(function (user) { return user.ready; });
+}
+function nickExists(nick) {
+   for (var i = 0; i &lt; users.length; i++) {
+      if (nick.toLowerCase() === users[i].nick.toLowerCase()) {
+         return true;
+      }
+   }
+   return false;
+}
+</pre>
+         </article>
+
+         <article>
+            <h4>Ha samma kod på servern som i webbläsaren</h4>
+            I slutet av modulens kod (User.js):
+            <pre>
+if (typeof module !== 'undefined') {
+   module.exports = User;
+}
+</pre>
+         I node.js:
+         <pre>
+var User = require(__dirname + '/static/js/User.js');
+</pre>
+         I webbläsaren (global scope):
+         <pre>
+&lt;script src="js/User.js"&gt;&lt;/script&gt;
+</pre>
+         </article>
+
+         <article class="nobackground">
+            <h4>Andra exempel på WebSockets av mig. Alla bygger node.js</h4>
+            <ul>
+               <li><a target="_blank" href="http://djazz.mine.nu/apps/Epsile/">http://djazz.mine.nu/apps/Epsile/</a><br>Chat with strangers (Omegle clone)</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/apps/draw/">http://djazz.mine.nu/apps/draw/</a><br>Draw with strangers</li>
+               <li><a target="_blank" href="http://djazz.mine.nu:8010/">http://djazz.mine.nu:8010/</a> (WebJCS)<br>En leveleditor med HTML5 Canvas</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/lab/rpi/remote/">http://djazz.mine.nu/lab/rpi/remote/</a><br>Kontrollera en LEGO-robot i realtid (offline)</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/lab/cpuinfo/">http://djazz.mine.nu/lab/cpuinfo/</a><br>Systemövervakare för Raspberry Pi</li>
+               <li><a target="_blank" href="https://github.com/daniel-j/jj2dedicated">https://github.com/daniel-j/jj2dedicated</a><br>Adminpanel som använder inloggning med WebSockets och SQLite som databas.</li>
+            </ul>
+         </article>
+
+         <article>
+            <h3>Tack för mig :)</h3>
+            <h4>Källkoden för chattprogrammet och detta bildspelet:</h4>
+            <h1 style="font-size: 47px"><a href="https://github.com/daniel-j/node-ws-chat">https://github.com/daniel-j/node-ws-chat</a></h1>
+         </article>
 
 
-
-         <article class='smaller'>
+         <!--<article class='smaller'>
             <h3>
                Simple slide with header and text (small font)
             </h3>
@@ -489,7 +647,7 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
                <li>
                   <a href='http://www.google.com'>google.com</a>
             </ul>
-         </article>
+         </article>-->
 
       </section>
 

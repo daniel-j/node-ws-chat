@@ -130,13 +130,14 @@
 	}
 
 	login.loginAttemptCallback = function (nick) {
-		myNick = nick;
 		
 		ws = new WebSocket(wsHost, wsProtocol);
 		ws.addEventListener('open', 	wsOpen);
 		ws.addEventListener('message', 	wsMessage);
 		ws.addEventListener('close', 	wsClose);
 		ws.addEventListener('error', 	wsError);
+
+		myNick = nick;
 
 		console.log("CONNECTING...");
 
