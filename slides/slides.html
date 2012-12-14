@@ -99,7 +99,8 @@ var UserManager = (function () {
          </article>
 
          <article class="nobackground">
-            <h3>Kodstruktur med exempel på arv</h3>
+            <h4 style="position: absolute; top: 0px;">Kodstruktur med exempel på arv</h4>
+            <br>
             <pre>
 var UserlistItem = (function () { // inherits from User.. da magicks!
    'use strict';
@@ -126,8 +127,59 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
 </pre>
          </article>
 
+         <article class="nobackground">
+            <h4 style="position: absolute; top: 0px;">Jämförelse mellan moduler i ES5 och ES6</h4>
+            <br>
+            <pre>
+// define a new type SkinnedMesh and a constructor for it
+function SkinnedMesh(geometry, materials) {
+  // call the superclass constructor
+  THREE.Mesh.call(this, geometry, materials);
+ 
+  // initialize instance properties
+  this.identityMatrix = new THREE.Matrix4();
+  this.bones = [];
+  this.boneMatrices = [];
+  ...
+};
+ 
+// inherit behavior from Mesh
+SkinnedMesh.prototype = Object.create(THREE.Mesh.prototype);
+SkinnedMesh.prototype.constructor = SkinnedMesh;
+ 
+// define an overridden update() method
+SkinnedMesh.prototype.update = function(camera) {
+  ...
+  // call base version of same method
+  THREE.Mesh.prototype.update.call(this);
+};</pre>
+         </article>
+
+         <article class="nobackground">
+            <h4 style="position: absolute; top: 0px;">Samma kod fast i ECMAScript 6</h4>
+            <br>
+            <pre>
+class SkinnedMesh extends THREE.Mesh {
+  constructor(geometry, materials) {
+    super(geometry, materials);
+ 
+    public identityMatrix = new THREE.Matrix4();
+    public bones = [];
+    public boneMatrices = [];
+    ...
+  }
+ 
+  update(camera) {
+    ...
+    super.update();
+  }
+}</pre>
+            <br>
+            <p>Källkod och exempel från<br><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">http://wiki.ecmascript.org/doku.php?id=harmony:classes</a></p>
+         </article>
+
          <article>
-            <h3>Kodstruktur - resurser</h3>
+            <h4>Kodstruktur - resurser</h4>
             <ul>
                <li><a target="_blank" href="http://www.2ality.com/2011/06/prototypes-as-classes.html">Prototypes as classes – an introduction to JavaScript inheritance</a></li>
                <li>[video] <a target="_blank" href="http://www.youtube.com/watch?v=NyClWddeO_A">JavaScript inheritance: beyond the basics</a></li>
@@ -192,8 +244,8 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
          </article>-->
 
          <article>
-            <h4>Ett chattprotokoll</h4>
-            <h5 style="line-height: 0px; margin: 0px; padding: 0px;">JSON-strängar som skickas mellan klient och server</h5>
+            <h3>Ett chattprotokoll</h3>
+            <h4 style="line-height: 30px; margin: 0px; margin-top: 10px; padding: 0px;">JSON-strängar som skickas mellan klient och server</h4>
             <ul>
                <li>Klienten skickar sitt nick till servern, join-request</li>
                <li>Servern kollar om nicket är upptaget, annars släpper den in användaren i chatten, join-accept</li>
@@ -205,11 +257,13 @@ var UserlistItem = (function () { // inherits from User.. da magicks!
          </article>
 
          <article class="nobackground">
-            <h5>Protokollet sett från servern</h5>
+            <h4 style="position: absolute; top: 0px">Protokollet sett från servern</h4>
+            <br>
             <pre>
 CONNECT // New user connected to WebSocket, set up event listeners, no action
 RECIEVED: {"nick":"djazz"} // This is a valid, unused nick, for this example
-SEND: {"nick": "djazz","userlist": [ // This is the response to joining client
+// This is the response to joining client
+SEND: {"nick": "djazz","userlist": [
    {"nick":"mos"}, {"nick":"bobbzorzen"}, {"nick":"djazz"}
 ]}
 // Tell others that a new user joined
@@ -224,6 +278,7 @@ RECIEVED: {"chat": "Hello world!"}
 // Send it to everyone, including to sender. Put a timestamp and sender index
 BROADCAST TO ALL: {"chat": "Hello world!",
                    "timestamp": "2012-12-13T16:23:47.661Z", "index": 2}
+
 CLOSED SOCKET // Someone disconnected, tell others (bobbzorzen left the room)
 BROADCAST TO OTHERS: {"leave": 1}
 //The userlist array now contain mos at slot 0 and djazz at 1
@@ -231,7 +286,8 @@ BROADCAST TO OTHERS: {"leave": 1}
          </article>
 
          <article class="nobackground">
-            <h5 style="position: absolute; top: 0px">WebSockets på klientsidan</h5>
+            <h4 style="position: absolute; top: 0px;">WebSockets på klientsidan</h4>
+            <br>
             <pre>
 var ws;
 function wsMessage(e) {
@@ -255,12 +311,11 @@ login.loginAttemptCallback = function (nick) {
    ws.addEventListener('error',     wsError);
    // ...
 }
-// ...
 </pre>
          </article>
 
          <article>
-            <h4>Serversidan</h4>
+            <h3>Serversidan</h3>
             <ul>
                <li>node.js kör WebSocket-modulen ws och webbservern express</li>
                <li>ws är den snabbaste och mest grundläggande WebSocket-modulen för node.js, inga massa extra funktioner</li>
@@ -270,10 +325,13 @@ login.loginAttemptCallback = function (nick) {
          </article>
 
          <article class="nobackground">
-            <h5>En WebSocket-server med ws</h5>
+            <h4 style="position: absolute; top: 0px;">En WebSocket-server med ws</h4>
+            <br>
             <pre>
-// ...
 var wss = new WebSocketServer({server: server});
+server.listen(port, function () {
+   console.log("Chat server started on port "+port);
+});
 
 wss.on('connection', function (ws) {
    // Save user in an array
@@ -296,6 +354,8 @@ wss.on('connection', function (ws) {
          </article>
 
          <article class="nobackground">
+            <h4 style="position: absolute; top: 0px;">Serverns hjälpfunktioner</h4>
+            <br>
             <pre>
 function sendData(ws, data) {
    try { ws.send(data); } catch (e) { ws.close(); }
@@ -344,7 +404,7 @@ var User = require(__dirname + '/static/js/User.js');
             <h4>Andra exempel på WebSockets av mig. Alla bygger node.js</h4>
             <ul>
                <li><a target="_blank" href="http://djazz.mine.nu/apps/Epsile/">http://djazz.mine.nu/apps/Epsile/</a><br>Chat with strangers (Omegle clone)</li>
-               <li><a target="_blank" href="http://djazz.mine.nu/apps/draw/">http://djazz.mine.nu/apps/draw/</a><br>Draw with strangers</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/apps/draw/">http://djazz.mine.nu/apps/draw/</a><br>Draw with strangers (SVG)</li>
                <li><a target="_blank" href="http://djazz.mine.nu:8010/">http://djazz.mine.nu:8010/</a> (WebJCS)<br>En leveleditor med HTML5 Canvas</li>
                <li><a target="_blank" href="http://djazz.mine.nu/lab/rpi/remote/">http://djazz.mine.nu/lab/rpi/remote/</a><br>Kontrollera en LEGO-robot i realtid (offline)</li>
                <li><a target="_blank" href="http://djazz.mine.nu/lab/cpuinfo/">http://djazz.mine.nu/lab/cpuinfo/</a><br>Systemövervakare för Raspberry Pi</li>
@@ -352,14 +412,15 @@ var User = require(__dirname + '/static/js/User.js');
             </ul>
          </article>
 
-         <article>
+         <article class="nobackground">
             <h4>Andra coola JavaScript/HTML5-demos</h4>
             <ul>
-               <li><a target="_blank" href="http://labs.dinahmoe.com/plink/">http://labs.dinahmoe.com/plink/</a><br>Spela musik med andra i realtid</li>
-               <li><a target="_blank" href="http://djazz.mine.nu/lab/minecraft_items/">http://djazz.mine.nu/lab/minecraft_items/</a><br>Minecraft-Steve som springer från en creeper i 3D!</li>
-               <li><a target="_blank" href="http://djazz.mine.nu/lab/Zelda/">http://djazz.mine.nu/lab/Zelda/</a></li>
-               <li><a target="_blank" href="http://jazzjackrabbit.net/DJ/WebJJ2/">http://jazzjackrabbit.net/DJ/WebJJ2/</a><br>2D plattformsspel med &lt;canvas&gt; och &lt;audio&gt;</li>
-               <li><a target="_blank" href="http://djazz.mine.nu/apps/analyzer/">http://djazz.mine.nu/apps/analyzer/</a>, <a target="_blank" href="http://djazz.mine.nu/lab/audiostream/">http://djazz.mine.nu/lab/audiostream/</a><br>Analysera ljud från ljudfil i realtid med JavaScript.</li>
+               <li><a target="_blank" href="http://labs.dinahmoe.com/plink/">http://labs.dinahmoe.com/plink/</a><br>Spela musik med andra i realtid (WebSockets)</li>
+               <li><a target="_blank" href="http://rumpetroll.com/">http://rumpetroll.com/</a><br>Simma runt i havet och chatta med andra (WebSockets)</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/lab/minecraft_items/">http://djazz.mine.nu/lab/minecraft_items/</a><br>Minecraft-Steve som springer från en creeper i 3D (Three.js)</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/lab/Zelda/">http://djazz.mine.nu/lab/Zelda/</a><br>Ett enkelt 2D Zelda-spel (Canvas)</li>
+               <li><a target="_blank" href="http://jazzjackrabbit.net/DJ/WebJJ2/">http://jazzjackrabbit.net/DJ/WebJJ2/</a><br>2D plattformsspel (Canvas)</li>
+               <li><a target="_blank" href="http://djazz.mine.nu/apps/analyzer/">http://djazz.mine.nu/apps/analyzer/</a>, <a target="_blank" href="http://djazz.mine.nu/lab/audiostream/">http://djazz.mine.nu/lab/audiostream/</a><br>Analysera ljud från ljudfil i realtid med JavaScript (Web Audio API)</li>
             </ul>
          </article>
 
